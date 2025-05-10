@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Categoria
+model Categoria {
+  id           Int       @id @default(autoincrement())
+  nome         String
+  produtos     Produto[]
+  criadaEm     DateTime  @default(now())
+  atualizadaEm DateTime  @updatedAt
+}
+
+// Modelo de Produto
+model Produto {
+  id           Int         @id @default(autoincrement())
+  nome         String
+  descricao    String
+  preco        Decimal     @db.Decimal(10,2)
+  imagemUrl    String
+  categoriaId  Int
+  categoria    Categoria   @relation(fields: [categoriaId], references: [id])
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+  pedidosItens PedidoItem[]
+  estoque      Int         @default(10)
+}
+
+// Modelo de Usuario
+model Usuario {
+  id           Int         @id @default(autoincrement())
+  nome         String
+  email        String      @unique
+  senhaHash    String
+  role         String      @default("USER")
+  admin        Boolean     @default(false)
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+  pedidos      Pedido[]
+  enderecos    Endereco[]
+}
+
+// Modelo de Pedido
+model Pedido {
+  id           Int          @id @default(autoincrement())
+  usuarioId    Int
+  usuario      Usuario      @relation(fields: [usuarioId], references: [id])
+  itens        PedidoItem[]
+  total        Decimal      @db.Decimal(10,2)
+  status       PedidoStatus @default(PENDENTE)
+  criadoEm     DateTime     @default(now())
+  atualizadoEm DateTime     @updatedAt
+  enderecoId   Int
+  endereco     Endereco     @relation(fields: [enderecoId], references: [id])
+  pagamento    Pagamento?
+}
+
+enum PedidoStatus {
+  PENDENTE
+  PAGO
+  ENVIADO
+  CANCELADO
+}
+
+// Modelo de PedidoItem (item)
+model PedidoItem {
+  id         Int      @id @default(autoincrement())
+  produtoId  Int
+  pedidoId   Int
+  quantidade Int
+  produto    Produto  @relation(fields: [produtoId], references: [id])
+  pedido     Pedido   @relation(fields: [pedidoId], references: [id])
+}
+
+// Modelo de Pagamento
+model Pagamento {
+  id           Int           @id @default(autoincrement())
+  pedidoId     Int           @unique
+  pedido       Pedido        @relation(fields: [pedidoId], references: [id])
+  status       PaymentStatus @default(PENDENTE)
+  metodo       String
+  valor        Decimal       @db.Decimal(10,2)
+  externalId   String?       // ID do SyncPay
+  criadaEm     DateTime      @default(now())
+  atualizadaEm DateTime      @updatedAt
+}
+
+enum PaymentStatus {
+  PENDENTE
+  PAGO
+  FALHOU
+  CANCELADO
+}
+
+// Modelo de Endereco
+model Endereco {
+  id           Int       @id @default(autoincrement())
+  usuarioId    Int
+  usuario      Usuario   @relation(fields: [usuarioId], references: [id])
+  rua          String
+  numero       String
+  bairro       String
+  cidade       String
+  estado       String
+  cep          String
+  criadoEm     DateTime  @default(now())
+  atualizadoEm DateTime  @updatedAt
+  pedidos      Pedido[]
+}
