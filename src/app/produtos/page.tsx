@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Star } from 'lucide-react';
+import { ArrowLeft, Star, ShoppingCart } from 'lucide-react';
+import { useCart } from '../../hooks/useCart';
+import { toast } from 'react-hot-toast';
 
 interface Produto {
   id: string;
@@ -18,38 +20,75 @@ interface Produto {
   nota: string;
   tamanhos: string[];
   categoria: string;
+  marca: string;
 }
 
 export default function ProdutosPage() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addItem } = useCart();
+  const [marcaSelecionada, setMarcaSelecionada] = useState<string>('');
 
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
-        const response = await fetch('/api/produtos');
-        if (!response.ok) {
-          throw new Error('Erro ao buscar produtos');
+        const url = new URL('/api/produtos', window.location.origin);
+        if (marcaSelecionada) {
+          url.searchParams.set('marca', marcaSelecionada);
         }
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Erro ao buscar produtos');
         const data = await response.json();
         setProdutos(data);
-      } catch (err) {
-        setError('Erro ao carregar produtos. Tente novamente mais tarde.');
-        console.error('Erro ao buscar produtos:', err);
+      } catch (error) {
+        console.error('Erro ao carregar produtos:', error);
+        toast.error('Erro ao carregar produtos');
       } finally {
         setLoading(false);
       }
     };
 
     fetchProdutos();
-  }, []);
+  }, [marcaSelecionada]);
+
+  const handleAddToCart = (produto: Produto) => {
+    addItem({
+      id: produto.id,
+      name: produto.nome,
+      price: produto.preco,
+      precoPix: produto.precoPix,
+      image: produto.imagem,
+    });
+    toast.success('Produto adicionado ao carrinho!');
+  };
+
+  const marcas = [
+    { id: '', nome: 'Todas as marcas' },
+    { id: 'nike', nome: 'Nike' },
+    { id: 'adidas', nome: 'Adidas' },
+    { id: 'puma', nome: 'Puma' },
+    { id: 'mizuno', nome: 'Mizuno' },
+    { id: 'asics', nome: 'Asics' },
+    { id: 'new-balance', nome: 'New Balance' },
+  ];
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="min-h-screen bg-gray-50 py-12">
+        <div className="container mx-auto px-4">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {[...Array(8)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm p-4">
+                  <div className="h-48 bg-gray-200 rounded mb-4"></div>
+                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -64,71 +103,90 @@ export default function ProdutosPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold">Nossos Produtos</h1>
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Voltar para a página inicial
-        </Link>
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {produtos.map((produto) => (
-          <Link
-            key={produto.id}
-            href={`/produtos/${produto.id}`}
-            className="group relative bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+    <div className="min-h-screen bg-gray-50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Nossos Produtos</h1>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/carrinho"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Ver Carrinho
+            </Link>
+            <Link
+              href="/"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Voltar para a página inicial
+            </Link>
+          </div>
+        </div>
+
+        <div className="mb-8">
+          <label htmlFor="marca" className="block text-sm font-medium text-gray-700 mb-2">
+            Filtrar por marca
+          </label>
+          <select
+            id="marca"
+            value={marcaSelecionada}
+            onChange={(e) => setMarcaSelecionada(e.target.value)}
+            className="w-full md:w-64 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500"
           >
-            <div className="aspect-w-1 aspect-h-1 w-full overflow-hidden">
-              <Image
-                src={produto.imagem}
-                alt={produto.nome}
-                width={300}
-                height={300}
-                className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-              />
-            </div>
-            
-            <div className="p-4">
-              <h2 className="text-lg font-semibold mb-2 line-clamp-2">{produto.nome}</h2>
-              
-              <div className="flex items-center mb-2">
-                <div className="flex text-yellow-400">
-                  {[...Array(5)].map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-4 h-4 ${
-                        i < Math.floor(Number(produto.nota))
-                          ? 'fill-current'
-                          : ''
-                      }`}
-                    />
-                  ))}
+            {marcas.map((marca) => (
+              <option key={marca.id} value={marca.id}>
+                {marca.nome}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {produtos.map((produto) => (
+            <div
+              key={produto.id}
+              className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+            >
+              <Link href={`/produtos/${produto.id}`}>
+                <div className="relative h-48">
+                  <Image
+                    src={produto.imagem}
+                    alt={produto.nome}
+                    fill
+                    className="object-cover rounded-t-lg"
+                  />
                 </div>
-                <span className="text-sm text-gray-500 ml-2">
-                  ({produto.avaliacoes})
-                </span>
+              </Link>
+              <div className="p-4">
+                <Link href={`/produtos/${produto.id}`}>
+                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                    {produto.nome}
+                  </h3>
+                </Link>
+                <p className="text-sm text-gray-500 mb-2">{produto.marca}</p>
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="text-lg font-bold text-red-600">
+                      R$ {produto.preco.toFixed(2)}
+                    </span>
+                    <span className="ml-2 text-sm text-gray-500 line-through">
+                      R$ {(produto.preco / 0.9).toFixed(2)}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleAddToCart(produto)}
+                  className="w-full bg-red-600 text-white py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-red-700 transition-colors"
+                >
+                  <ShoppingCart size={20} />
+                  <span>Adicionar ao Carrinho</span>
+                </button>
               </div>
-              
-              <div className="space-y-1">
-                <p className="text-2xl font-bold text-primary">
-                  R$ {produto.preco.toFixed(2)}
-                </p>
-                <p className="text-sm text-gray-500">
-                  ou R$ {produto.precoPix.toFixed(2)} no PIX
-                </p>
-              </div>
-              
-              <p className="text-sm text-gray-500 mt-2">
-                Vendido por {produto.vendedor}
-              </p>
             </div>
-          </Link>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

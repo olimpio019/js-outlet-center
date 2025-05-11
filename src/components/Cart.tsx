@@ -66,7 +66,7 @@ export function Cart() {
       {isOpen && (
         <div 
           id="cart-dropdown"
-          className="absolute right-0 top-full mt-2 w-96 bg-white rounded-lg shadow-xl z-50 border border-gray-100"
+          className="absolute right-0 top-full mt-2 w-[95vw] max-w-xs sm:max-w-md md:w-96 bg-white rounded-lg shadow-xl z-50 border border-gray-100 overflow-x-auto"
         >
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">

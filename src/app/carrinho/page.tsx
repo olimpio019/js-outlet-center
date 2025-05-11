@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 
 export default function CarrinhoPage() {
-  const { items, total, removeFromCart, updateQuantity } = useCart();
+  const { items, total, removeItem, updateQuantity } = useCart();
 
   if (items.length === 0) {
     return (
@@ -68,7 +68,7 @@ export default function CarrinhoPage() {
                           </button>
                         </div>
                         <button
-                          onClick={() => removeFromCart(item.id)}
+                          onClick={() => removeItem(item.id)}
                           className="text-red-600 hover:text-red-700 flex items-center gap-1"
                         >
                           <Trash2 size={16} />
@@ -83,38 +83,27 @@ export default function CarrinhoPage() {
           </div>
 
           {/* Resumo do pedido */}
-          <div className="md:w-80">
-            <div className="bg-white p-6 rounded-xl shadow-sm sticky top-4">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Resumo do Pedido</h2>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span className="font-medium">R$ {total.toFixed(2)}</span>
+          <div className="md:w-96">
+            <div className="bg-white p-6 rounded-xl shadow-sm sticky top-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Resumo do Pedido</h2>
+              <div className="space-y-4">
+                <div className="flex justify-between text-gray-600">
+                  <span>Subtotal</span>
+                  <span>R$ {total.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Frete</span>
-                  <span className="font-medium">Grátis</span>
-                </div>
-                <div className="border-t pt-3">
+                <div className="border-t pt-4">
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
                     <span className="text-red-600">R$ {total.toFixed(2)}</span>
                   </div>
                 </div>
+                <Link
+                  href="/checkout"
+                  className="block w-full bg-red-600 text-white text-center py-3 rounded-lg hover:bg-red-700 transition-colors font-medium"
+                >
+                  Finalizar Compra
+                </Link>
               </div>
-              <Link
-                href="/checkout"
-                className="mt-6 w-full bg-red-600 text-white py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-red-700 transition-colors shadow-md hover:shadow-lg"
-              >
-                <span>Ir para o Checkout</span>
-              </Link>
-              <Link
-                href="/produtos"
-                className="mt-3 w-full bg-white text-red-600 py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors border-2 border-red-600 shadow-sm hover:shadow-md"
-              >
-                <ArrowLeft size={20} />
-                <span>Continuar Comprando</span>
-              </Link>
             </div>
           </div>
         </div>

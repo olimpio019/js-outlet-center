@@ -1,13 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { User, Search, Menu } from 'lucide-react';
+import { User, Search } from 'lucide-react';
 import { Cart } from './Cart';
-import { useState } from 'react';
 
 export function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
@@ -33,27 +30,13 @@ export function Header() {
               </Link>
               <Cart />
             </div>
-            <button 
-              className="md:hidden p-2 rounded-full hover:bg-gray-100 transition flex items-center justify-center w-10 h-10"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Menu"
-            >
-              <Menu size={24} className="text-gray-600" />
-            </button>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className={`${isMenuOpen ? 'block' : 'hidden'} md:block py-4`}>
-          <div className="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-6">
-            <button className="flex items-center space-x-2 text-gray-600 hover:text-red-600">
-              <Menu size={20} />
-              <span>Categorias</span>
-            </button>
-            <Link href="/masculino" className="text-gray-600 hover:text-red-600">Masculino</Link>
-            <Link href="/feminino" className="text-gray-600 hover:text-red-600">Feminino</Link>
-            <Link href="/infantil" className="text-gray-600 hover:text-red-600">Infantil</Link>
-            <Link href="/esportes" className="text-gray-600 hover:text-red-600">Esportes</Link>
+        <nav className="py-4">
+          <div className="flex items-center space-x-6">
+            <Link href="/produtos" className="text-gray-600 hover:text-red-600">Produtos</Link>
             <Link href="/marcas" className="text-gray-600 hover:text-red-600">Marcas</Link>
             <Link href="/ofertas" className="text-red-600 font-bold">Ofertas</Link>
           </div>

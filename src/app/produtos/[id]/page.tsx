@@ -178,13 +178,23 @@ export default function ProdutoDetalhePage() {
             </div>
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
-          >
-            <ShoppingCart className="w-5 h-5" />
-            Adicionar ao Carrinho
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={handleAddToCart}
+              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Adicionar ao Carrinho
+            </button>
+
+            <Link
+              href="/carrinho"
+              className="w-full bg-gray-100 text-gray-800 py-3 rounded-md hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+            >
+              <ShoppingCart className="w-5 h-5" />
+              Ver Carrinho
+            </Link>
+          </div>
         </div>
       </div>
     </div>
