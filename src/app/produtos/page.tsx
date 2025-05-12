@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, Star, ShoppingCart } from 'lucide-react';
 import { useCart } from '../../hooks/useCart';
 import { toast } from 'react-hot-toast';
+import { useSearchParams } from 'next/navigation';
 
 interface Produto {
   id: string;
@@ -29,6 +30,8 @@ export default function ProdutosPage() {
   const [error, setError] = useState<string | null>(null);
   const { addItem } = useCart();
   const [marcaSelecionada, setMarcaSelecionada] = useState<string>('');
+  const searchParams = useSearchParams();
+  const termoBusca = searchParams.get('busca') || '';
 
   useEffect(() => {
     const fetchProdutos = async () => {
@@ -36,6 +39,9 @@ export default function ProdutosPage() {
         const url = new URL('/api/produtos', window.location.origin);
         if (marcaSelecionada) {
           url.searchParams.set('marca', marcaSelecionada);
+        }
+        if (termoBusca) {
+          url.searchParams.set('busca', termoBusca);
         }
         const response = await fetch(url);
         if (!response.ok) throw new Error('Erro ao buscar produtos');
@@ -50,7 +56,7 @@ export default function ProdutosPage() {
     };
 
     fetchProdutos();
-  }, [marcaSelecionada]);
+  }, [marcaSelecionada, termoBusca]);
 
   const handleAddToCart = (produto: Produto) => {
     addItem({

@@ -6,10 +6,17 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const categoria = searchParams.get('categoria');
     const marca = searchParams.get('marca');
+    const busca = searchParams.get('busca');
 
     const where = {
       ...(categoria && { categoria: { nome: categoria } }),
       ...(marca && { marca }),
+      ...(busca && {
+        OR: [
+          { nome: { contains: busca, mode: 'insensitive' } },
+          { descricao: { contains: busca, mode: 'insensitive' } }
+        ]
+      }),
     };
 
     const produtos = await prisma.produto.findMany({

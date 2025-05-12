@@ -3,8 +3,13 @@
 import Link from 'next/link';
 import { User, Search } from 'lucide-react';
 import { Cart } from './Cart';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 export function Header() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const router = useRouter();
+
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-4">
@@ -16,11 +21,18 @@ export function Header() {
             </Link>
           </div>
           <div className="flex items-center space-x-4 md:space-x-6">
-            <div className="hidden md:block relative">
+            <div className="w-full max-w-xs md:max-w-md relative">
               <input
                 type="text"
                 placeholder="Buscar produtos..."
-                className="w-64 md:w-96 px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-red-500"
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && searchTerm.trim()) {
+                    router.push(`/produtos?busca=${encodeURIComponent(searchTerm)}`);
+                  }
+                }}
+                className="w-full px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 pr-10"
               />
               <Search className="absolute right-3 top-2.5 text-gray-400" />
             </div>
