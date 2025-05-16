@@ -100,12 +100,12 @@ export default function AdminProdutos() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Gerenciar Produtos</h1>
+    <div className="space-y-6 p-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Gerenciar Produtos</h1>
         <Link
           href="/admin/produtos/novo"
-          className="bg-red-600 text-white px-4 py-2 rounded-lg flex items-center space-x-2 hover:bg-red-700 transition"
+          className="w-full sm:w-auto bg-red-600 text-white px-4 py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-red-700 transition"
         >
           <Plus className="w-5 h-5" />
           <span>Adicionar Produto</span>
@@ -124,33 +124,37 @@ export default function AdminProdutos() {
         <Search className="w-5 h-5 text-gray-400 absolute left-3 top-2.5" />
       </div>
 
-      {/* Tabela de Produtos */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Produto
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Categoria
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Preço
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Estoque
-              </th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Ações
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+      {/* Lista de Produtos */}
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <div className="min-w-full divide-y divide-gray-200">
+          {/* Cabeçalho */}
+          <div className="bg-gray-50">
+            <div className="grid grid-cols-12 gap-4 px-6 py-3">
+              <div className="col-span-6 sm:col-span-4">
+                <span className="text-xs font-medium text-gray-500 uppercase">Produto</span>
+              </div>
+              <div className="hidden sm:block col-span-2">
+                <span className="text-xs font-medium text-gray-500 uppercase">Categoria</span>
+              </div>
+              <div className="col-span-3 sm:col-span-2">
+                <span className="text-xs font-medium text-gray-500 uppercase">Preço</span>
+              </div>
+              <div className="col-span-3 sm:col-span-2">
+                <span className="text-xs font-medium text-gray-500 uppercase">Estoque</span>
+              </div>
+              <div className="col-span-12 sm:col-span-2 text-right">
+                <span className="text-xs font-medium text-gray-500 uppercase">Ações</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Corpo da Tabela */}
+          <div className="divide-y divide-gray-200">
             {filteredProdutos.map((produto) => (
-              <tr key={produto.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
+              <div key={produto.id} className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-gray-50">
+                {/* Produto */}
+                <div className="col-span-6 sm:col-span-4">
+                  <div className="flex items-center space-x-3">
                     <div className="flex-shrink-0 h-10 w-10">
                       <img
                         className="h-10 w-10 rounded-full object-cover"
@@ -158,53 +162,61 @@ export default function AdminProdutos() {
                         alt={produto.nome}
                       />
                     </div>
-                    <div className="ml-4">
-                      <div className="text-sm font-medium text-gray-900">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
                         {produto.nome}
-                      </div>
-                      <div className="text-sm text-gray-500">
+                      </p>
+                      <p className="text-sm text-gray-500 truncate">
                         {produto.descricao}
-                      </div>
+                      </p>
                     </div>
                   </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{produto.categoria.nome}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">
+                </div>
+
+                {/* Categoria */}
+                <div className="hidden sm:block col-span-2">
+                  <p className="text-sm text-gray-900">{produto.categoria.nome}</p>
+                </div>
+
+                {/* Preço */}
+                <div className="col-span-3 sm:col-span-2">
+                  <p className="text-sm text-gray-900">
                     R$ {produto.preco.toFixed(2)}
-                  </div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm text-gray-900">{produto.estoque}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  </p>
+                </div>
+
+                {/* Estoque */}
+                <div className="col-span-3 sm:col-span-2">
+                  <p className="text-sm text-gray-900">{produto.estoque}</p>
+                </div>
+
+                {/* Ações */}
+                <div className="col-span-12 sm:col-span-2 flex justify-end space-x-2">
                   <Link
                     href={`/admin/produtos/${produto.id}/editar`}
-                    className="text-red-600 hover:text-red-900 mr-4"
+                    className="text-red-600 hover:text-red-900 p-1"
                   >
-                    <Edit className="w-5 h-5 inline-block" />
+                    <Edit className="w-5 h-5" />
                   </Link>
                   <button
                     onClick={() => {
                       setProdutoToDelete(produto.id);
                       setShowDeleteModal(true);
                     }}
-                    className="text-red-600 hover:text-red-900"
+                    className="text-red-600 hover:text-red-900 p-1"
                   >
-                    <Trash2 className="w-5 h-5 inline-block" />
+                    <Trash2 className="w-5 h-5" />
                   </button>
-                </td>
-              </tr>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal de Confirmação de Exclusão */}
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h2 className="text-xl font-bold mb-4">Confirmar Exclusão</h2>
             <p className="mb-6">
