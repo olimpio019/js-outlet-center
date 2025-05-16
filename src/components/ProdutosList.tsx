@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useCart } from "../../hooks/useCart";
+import { useCart } from "../hooks/useCart";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
 import Image from "next/image";
@@ -181,13 +181,12 @@ export function ProdutosList() {
                     </span>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleAddToCart(produto)}
+                <Link
+                  href={`/produtos/${produto.id}`}
                   className="w-full bg-red-600 text-white py-2 rounded-lg flex items-center justify-center space-x-2 hover:bg-red-700 transition-colors"
                 >
-                  <ShoppingCart size={20} />
-                  <span>Adicionar ao Carrinho</span>
-                </button>
+                  <span>Mais Detalhes</span>
+                </Link>
               </div>
             </div>
           ))}

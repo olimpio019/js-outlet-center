@@ -138,13 +138,12 @@ export function FeaturedProducts() {
                 </div>
               </Link>
               <div className="px-3 md:px-6 pb-3 md:pb-6">
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="w-full bg-red-600 text-white py-2 md:py-3 rounded-lg flex items-center justify-center space-x-1 md:space-x-2 hover:bg-red-700 transition-colors text-sm md:text-base"
+                <Link
+                  href={`/produto/${product.id}`}
+                  className="block w-full bg-red-600 text-white py-2 md:py-3 rounded-lg text-center hover:bg-red-700 transition-colors font-medium"
                 >
-                  <ShoppingCart size={16} className="md:w-5 md:h-5" />
-                  <span>Adicionar ao Carrinho</span>
-                </button>
+                  Mais Detalhes
+                </Link>
               </div>
             </div>
           ))}
